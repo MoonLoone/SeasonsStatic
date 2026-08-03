@@ -6,8 +6,12 @@ layout(location = 2) in float aSize;
 layout(location = 3) in float aRnd;
 layout(location = 4) in float aAlpha;
 uniform vec2 uResolution;
-out vec2 vUv; out float vRnd; out float vAlpha;
+uniform float uVisibleCount;
+out vec2 vUv; out float vRnd; out float vAlpha; out float vFade;
 void main(){
+    float fade = clamp((uVisibleCount - float(gl_InstanceID)) / 24.0, 0.0, 1.0);
+    if (fade <= 0.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFade = 0.0; return; }
+
     int vid = gl_VertexID;
     vec2 c = vec2((vid & 1) == 0 ? -1.0 : 1.0, (vid & 2) == 0 ? -1.0 : 1.0);
     vec2 local = c * aSize;
@@ -16,5 +20,5 @@ void main(){
     vec2 px = aPosition + vec2(r.x, -r.y);
     vec2 ndc = (px / uResolution) * 2.0 - 1.0; ndc.y = -ndc.y;
     gl_Position = vec4(ndc, 0.0, 1.0);
-    vUv = c; vRnd = aRnd; vAlpha = aAlpha;
+    vUv = c; vRnd = aRnd; vAlpha = aAlpha; vFade = fade;
 }

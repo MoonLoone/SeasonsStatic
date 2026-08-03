@@ -5,7 +5,9 @@
   "compute": "leaves.comp",
   "vertex": "leaves.vert",
   "fragment": "leaves.frag",
-  "count": 140,
+  "maxParticles": 1200,
+  "burstCount": 120,
+  "decayPerSec": 30,
   "particleFloats": 10,
   "attributes": [
     { "location": 0, "size": 2, "offset": 0 },

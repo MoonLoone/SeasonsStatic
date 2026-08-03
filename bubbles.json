@@ -5,7 +5,9 @@
   "compute": "bubbles.comp",
   "vertex": "bubbles.vert",
   "fragment": "bubbles.frag",
-  "count": 70,
+  "maxParticles": 600,
+  "burstCount": 60,
+  "decayPerSec": 15,
   "particleFloats": 10,
   "attributes": [
     { "location": 0, "size": 2, "offset": 0 },

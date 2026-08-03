@@ -1,6 +1,6 @@
 #version 310 es
 precision highp float;
-in vec2 vUv; in float vRnd; in float vLife; in float vSmall;
+in vec2 vUv; in float vRnd; in float vLife; in float vSmall; in float vFade;
 uniform sampler2D uAtlas; uniform float uDarkMode;
 out vec4 fragColor;
 void main(){
@@ -34,8 +34,8 @@ void main(){
     float dropA = drop * pop * (1.0 - smoothstep(0.55, 1.0, pop));
     vec3 dropCol = vec3(0.95);
 
-    vec3 outCol = texCol + dropCol * dropA;
-    float outA = min(bubbleA + dropA, 1.0);
+    vec3 outCol = (texCol + dropCol * dropA) * vFade;
+    float outA = min(bubbleA + dropA, 1.0) * vFade;
     if (outA < 0.004) discard;
     fragColor = vec4(outCol, outA);
 }

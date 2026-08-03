@@ -6,8 +6,12 @@ layout(location = 2) in float aRnd;
 layout(location = 3) in float aWobble;
 layout(location = 4) in float aLife;
 uniform vec2 uResolution;
-out vec2 vUv; out float vRnd; out float vLife; out float vSmall;
+uniform float uVisibleCount;
+out vec2 vUv; out float vRnd; out float vLife; out float vSmall; out float vFade;
 void main(){
+    float fade = clamp((uVisibleCount - float(gl_InstanceID)) / 24.0, 0.0, 1.0);
+    if (fade <= 0.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFade = 0.0; return; }
+
     int vid = gl_VertexID;
     vec2 c = vec2((vid & 1) == 0 ? -1.0 : 1.0, (vid & 2) == 0 ? -1.0 : 1.0);
     float pop = smoothstep(0.88, 1.0, aLife);
@@ -17,5 +21,5 @@ void main(){
     vec2 px = aPosition + vec2(local.x, -local.y);
     vec2 ndc = (px / uResolution) * 2.0 - 1.0; ndc.y = -ndc.y;
     gl_Position = vec4(ndc, 0.0, 1.0);
-    vUv = c; vRnd = aRnd; vLife = aLife; vSmall = aRadius < 40.0 ? 1.0 : 0.0;
+    vUv = c; vRnd = aRnd; vLife = aLife; vSmall = aRadius < 40.0 ? 1.0 : 0.0; vFade = fade;
 }

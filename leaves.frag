@@ -1,6 +1,6 @@
 #version 310 es
 precision highp float;
-in vec2 vUv; in float vRnd;
+in vec2 vUv; in float vRnd; in float vFade;
 uniform sampler2D uAtlas; uniform float uDarkMode;
 out vec4 fragColor;
 void main(){
@@ -18,5 +18,6 @@ void main(){
     vec3 col = mix(coral, peach, smoothstep(0.0, 0.5, h));
     col = mix(col, gold, smoothstep(0.5, 1.0, h));
     col *= mix(1.0, 1.06, uDarkMode);
-    fragColor = vec4(col * cover, cover);
+    float a = cover * vFade;
+    fragColor = vec4(col * a, a);
 }

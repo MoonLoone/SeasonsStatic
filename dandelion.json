@@ -5,7 +5,9 @@
   "compute": "dandelion.comp",
   "vertex": "dandelion.vert",
   "fragment": "dandelion.frag",
-  "count": 110,
+  "maxParticles": 900,
+  "burstCount": 100,
+  "decayPerSec": 25,
   "particleFloats": 10,
   "attributes": [
     { "location": 0, "size": 2, "offset": 0 },
