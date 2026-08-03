@@ -1,0 +1,27 @@
+{
+  "id": "leaves",
+  "title": "Листья",
+  "atlas": "leafatlas.png",
+  "compute": "leaves.comp",
+  "vertex": "leaves.vert",
+  "fragment": "leaves.frag",
+  "count": 140,
+  "particleFloats": 10,
+  "attributes": [
+    { "location": 0, "size": 2, "offset": 0 },
+    { "location": 1, "size": 1, "offset": 16 },
+    { "location": 2, "size": 1, "offset": 24 },
+    { "location": 3, "size": 1, "offset": 28 },
+    { "location": 4, "size": 1, "offset": 32 }
+  ],
+  "init": [
+    { "i": 0, "kind": "screenX" },
+    { "i": 1, "kind": "screenY" },
+    { "i": 4, "kind": "angle" },
+    { "i": 5, "kind": "range", "min": -0.5, "max": 0.5 },
+    { "i": 6, "kind": "range", "min": 22, "max": 48 },
+    { "i": 7, "kind": "range", "min": 0, "max": 1 },
+    { "i": 8, "kind": "angle" },
+    { "i": 9, "kind": "angle" }
+  ]
+}

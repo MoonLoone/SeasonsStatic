@@ -1,0 +1,27 @@
+{
+  "id": "bubbles",
+  "title": "Пузыри",
+  "atlas": "bubbleatlas.png",
+  "compute": "bubbles.comp",
+  "vertex": "bubbles.vert",
+  "fragment": "bubbles.frag",
+  "count": 70,
+  "particleFloats": 10,
+  "attributes": [
+    { "location": 0, "size": 2, "offset": 0 },
+    { "location": 1, "size": 1, "offset": 16 },
+    { "location": 2, "size": 1, "offset": 20 },
+    { "location": 3, "size": 1, "offset": 28 },
+    { "location": 4, "size": 1, "offset": 32 }
+  ],
+  "init": [
+    { "i": 0, "kind": "screenX" },
+    { "i": 1, "kind": "screenY" },
+    { "i": 4, "kind": "bimodal", "p": 0.38, "aMin": 18, "aMax": 38, "bMin": 42, "bMax": 95 },
+    { "i": 5, "kind": "range", "min": 0, "max": 1 },
+    { "i": 6, "kind": "angle" },
+    { "i": 7, "kind": "angle" },
+    { "i": 8, "kind": "range", "min": 0, "max": 0.8 },
+    { "i": 9, "kind": "angle" }
+  ]
+}
