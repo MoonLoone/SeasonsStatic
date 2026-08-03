@@ -1,0 +1,45 @@
+#version 310 es
+precision highp float;
+layout(local_size_x = 64) in;
+struct Heart { vec2 position; vec2 velocity; float rotation; float angularVel; float size; float rnd; float phase; float sway; };
+layout(std430, binding = 0) buffer Buf { Heart items[]; };
+uniform vec2 uResolution; uniform float uTime; uniform float uDt; uniform uint uCount;
+
+#include "common_noise.glsl"
+
+void main(){
+    uint id = gl_GlobalInvocationID.x;
+    if (id >= uCount) return;
+    Heart h = items[id];
+    float t = uTime; float W = uResolution.x, H = uResolution.y;
+
+    // мягкий подъём вверх с лёгким блужданием направления
+    float wAng = (vnoise(vec2(t * 0.08, 5.3)) - 0.5) * 0.5;
+    vec2 windDir = normalize(vec2(sin(wAng) * 0.30, -1.0));
+    vec2 wind = windDir * 60.0;
+
+    vec2 q = h.position / 240.0;
+    vec2 swirl = curl(q + t * 0.05) * 18.0;
+
+    float catchW = 0.8 + h.rnd * 0.4;
+    vec2 target = (wind + swirl) * catchW;
+    h.velocity += (target - h.velocity) * min(1.6 * uDt, 1.0);
+
+    // покачивание из стороны в сторону
+    h.sway += uDt * (1.2 + h.rnd * 1.0);
+    h.velocity.x += sin(h.sway) * 22.0 * uDt;
+
+    // фаза пульсации размера (используется в вершинном шейдере)
+    h.phase += uDt * (1.5 + h.rnd * 1.5);
+
+    h.position += h.velocity * uDt;
+    h.rotation = sin(h.sway) * 0.25; // лёгкий наклон в такт покачиванию
+
+    float m = h.size + 30.0;
+    if (h.position.x < -m)     h.position.x += W + 2.0 * m;
+    if (h.position.x > W + m)  h.position.x -= W + 2.0 * m;
+    if (h.position.y < -m)     h.position.y += H + 2.0 * m;
+    if (h.position.y > H + m)  h.position.y -= H + 2.0 * m;
+
+    items[id] = h;
+}
