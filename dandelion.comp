@@ -1,0 +1,45 @@
+#version 310 es
+precision highp float;
+layout(local_size_x = 64) in;
+struct Seed { vec2 position; vec2 velocity; float rotation; float angularVel; float size; float rnd; float flutter; float alpha; };
+layout(std430, binding = 0) buffer Buf { Seed items[]; };
+uniform vec2 uResolution; uniform float uTime; uniform float uDt; uniform uint uCount;
+
+#include "common_noise.glsl"
+
+void main(){
+    uint id = gl_GlobalInvocationID.x;
+    if (id >= uCount) return;
+    Seed s = items[id];
+    float t = uTime; float W = uResolution.x, H = uResolution.y;
+
+    float elev = 1.40 + (vnoise(vec2(t * 0.10, 8.7)) - 0.5) * 0.20;
+    vec2 windDir = vec2(cos(elev), -sin(elev));
+    vec2 globalWind = windDir * 130.0;
+
+    vec2 q = s.position / 220.0;
+    vec2 swirl = curl(q + t * 0.05) * 14.0;
+
+    float catchW = 0.90 + s.rnd * 0.20;
+    vec2 target = (globalWind + swirl) * catchW;
+    s.velocity += (target - s.velocity) * min(2.2 * uDt, 1.0);
+
+    s.flutter += uDt * (1.6 + s.rnd * 1.0);
+    vec2 axis = normalize(globalWind + vec2(0.001, 0.0));
+    vec2 perp = vec2(-axis.y, axis.x);
+    s.velocity += perp * sin(s.flutter * 1.6) * 18.0 * uDt;
+
+    s.position += s.velocity * uDt;
+
+    float targetRot = atan(-s.velocity.x, -s.velocity.y);
+    float dRot = atan(sin(targetRot - s.rotation), cos(targetRot - s.rotation));
+    s.rotation += dRot * min(5.0 * uDt, 1.0);
+
+    float m = 90.0;
+    if (s.position.x < -m)     s.position.x += W + 2.0 * m;
+    if (s.position.x > W + m)  s.position.x -= W + 2.0 * m;
+    if (s.position.y < -m)     s.position.y += H + 2.0 * m;
+    if (s.position.y > H + m)  s.position.y -= H + 2.0 * m;
+
+    items[id] = s;
+}
